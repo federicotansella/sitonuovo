@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Video sincronizzato</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: black;
+    }
+    #player {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="player"></div>
+
+  <script>
+    // 🔹 INSERISCI QUI GLI ID DEI TUOI VIDEO (copiati dal link YouTube)
+    // esempio link: https://www.youtube.com/watch?v=AbCdEf123
+    // l'ID è la parte dopo ?v=  → "AbCdEf123"
+    const videoIds = [
+      "f_wNe6HLR_4",  // primo video (ore 0-6)
+      "UdYMRdu-Opg",  // secondo video (ore 6-12)
+      "01vUTQwEc7o",  // terzo video (ore 12-18)
+      "Xj_kcAayFA0"   // quarto video (ore 18-24)
+    ];
+
+    // Ora locale dell’utente in secondi
+    const now = new Date();
+    const secondsToday = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+
+    // Ogni video dura 6 ore = 21600 secondi
+    const segmentDuration = 21600;
+    const segmentIndex = Math.floor(secondsToday / segmentDuration); // quale video scegliere
+    const startSeconds = secondsToday % segmentDuration; // punto di partenza
+
+    // Carica API di YouTube
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    var player;
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('player', {
+        videoId: videoIds[segmentIndex],
+        playerVars: {
+          autoplay: 1,
+          controls: 1,
+          start: startSeconds,
+          modestbranding: 1,
+          rel: 0
+        }
+      });
+    }
+  </script>
+</body>
+</html>
