@@ -13,6 +13,7 @@
       justify-content: center;
       align-items: center;
       position: relative;
+      overflow: hidden;
     }
     video {
       width: 80%;    /* puoi cambiare per ingrandire/rimpicciolire */
@@ -25,11 +26,26 @@
       font-size: 1.5em;
       font-family: sans-serif;
     }
+    #fullscreenBtn {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(255,255,255,0.3);
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size: 1.2em;
+    }
+    #fullscreenBtn:hover {
+      background: rgba(255,255,255,0.6);
+    }
   </style>
 </head>
 <body>
   <video id="myVideo" autoplay muted playsinline></video>
   <p id="loading">live stream is loading...</p>
+  <button id="fullscreenBtn">⛶</button>
 
   <script>
     // 🔹 I tuoi 4 video da 6 ore
@@ -49,9 +65,9 @@
     const startSeconds = secondsToday % secondsPerVideo;
 
     const video = document.getElementById("myVideo");
-    video.src = videoUrls[videoIndex];
-
     const loading = document.getElementById("loading");
+
+    video.src = videoUrls[videoIndex];
 
     // Retry: aspetta che il video sia pronto prima di saltare
     function trySeek() {
@@ -68,6 +84,18 @@
     }
 
     video.addEventListener("loadedmetadata", trySeek);
+
+    // 🔹 Fullscreen button
+    const fsBtn = document.getElementById("fullscreenBtn");
+    fsBtn.addEventListener("click", () => {
+      if (video.requestFullscreen) {
+        video.requestFullscreen();
+      } else if (video.webkitRequestFullscreen) { // Safari
+        video.webkitRequestFullscreen();
+      } else if (video.msRequestFullscreen) { // IE/Edge
+        video.msRequestFullscreen();
+      }
+    });
   </script>
 </body>
 </html>
