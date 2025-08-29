@@ -12,19 +12,27 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      position: relative;
       overflow: hidden;
     }
+    .video-container {
+      position: relative;
+      display: inline-block;
+    }
     video {
-      width: 80%;    /* puoi cambiare per ingrandire/rimpicciolire */
+      width: 80%; /* puoi modificare per ingrandire/rimpicciolire */
       height: auto;
       background: black;
+      display: block;
     }
     #loading {
       position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       color: white;
       font-size: 1.5em;
       font-family: sans-serif;
+      pointer-events: none;
     }
     #fullscreenBtn {
       position: absolute;
@@ -43,9 +51,11 @@
   </style>
 </head>
 <body>
-  <video id="myVideo" autoplay muted playsinline></video>
-  <p id="loading">live stream is loading...</p>
-  <button id="fullscreenBtn">⛶</button>
+  <div class="video-container">
+    <video id="myVideo" autoplay muted playsinline></video>
+    <p id="loading">live stream is loading...</p>
+    <button id="fullscreenBtn">⛶</button>
+  </div>
 
   <script>
     // 🔹 I tuoi 4 video da 6 ore
@@ -94,6 +104,16 @@
         video.webkitRequestFullscreen();
       } else if (video.msRequestFullscreen) { // IE/Edge
         video.msRequestFullscreen();
+      }
+    });
+
+    // 🔹 Nascondere timeline/controlli in fullscreen
+    document.addEventListener('fullscreenchange', () => {
+      if (document.fullscreenElement) {
+        // Nasconde il cursore e mantiene solo il pulsante custom
+        video.controls = false;
+      } else {
+        video.controls = false; // mantiene video pulito anche in normale
       }
     });
   </script>
