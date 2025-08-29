@@ -9,55 +9,49 @@
       padding: 0;
       height: 100%;
       background: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
-    #player {
-      width: 100%;
-      height: 100%;
+    video {
+      width: 80%;   /* 🔹 puoi regolare la dimensione */
+      height: auto; /* 🔹 mantiene le proporzioni */
+      background: black;
     }
   </style>
 </head>
 <body>
-  <div id="player"></div>
+  <video id="myVideo" autoplay muted playsinline></video>
 
   <script>
-    // 🔹 INSERISCI QUI GLI ID DEI TUOI VIDEO (copiati dal link YouTube)
-    // esempio link: https://www.youtube.com/watch?v=AbCdEf123
-    // l'ID è la parte dopo ?v=  → "AbCdEf123"
-    const videoIds = [
-      "f_wNe6HLR_4",  // primo video (ore 0-6)
-      "UdYMRdu-Opg",  // secondo video (ore 6-12)
-      "01vUTQwEc7o",  // terzo video (ore 12-18)
-      "Xj_kcAayFA0"   // quarto video (ore 18-24)
+    // 🔹 Inserisci qui gli URL .mp4 dei tuoi 4 video su Archive.org
+    const videoUrls = [
+     https://ia601703.us.archive.org/1/items/vincere_hd_night_NEWPOSTERS/vincere_hd_night_NEWPOSTERS.mp4,  // ore 0-6
+      https://ia802909.us.archive.org/22/items/vincere_hd_day_NEWPOSTERS/vincere_hd_day_NEWPOSTERS.mp4,  // ore 6-12
+     https://ia800908.us.archive.org/17/items/vincere_hd_sunset/vincere_hd_sunset.mp4,  // ore 12-18
+     https://ia801703.us.archive.org/1/items/vincere_hd_night_NEWPOSTERS/vincere_hd_night_NEWPOSTERS.mp4   // ore 18-24
     ];
 
-    // Ora locale dell’utente in secondi
+    // Ora locale in secondi
     const now = new Date();
     const secondsToday = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
 
     // Ogni video dura 6 ore = 21600 secondi
     const segmentDuration = 21600;
-    const segmentIndex = Math.floor(secondsToday / segmentDuration); // quale video scegliere
-    const startSeconds = secondsToday % segmentDuration; // punto di partenza
+    const segmentIndex = Math.floor(secondsToday / segmentDuration);
+    const startSeconds = secondsToday % segmentDuration;
 
-    // Carica API di YouTube
-    var tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    var firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    const video = document.getElementById("myVideo");
+    video.src = videoUrls[segmentIndex];
 
-    var player;
-    function onYouTubeIframeAPIReady() {
-      player = new YT.Player('player', {
-        videoId: videoIds[segmentIndex],
-        playerVars: {
-          autoplay: 1,
-          controls: 1,
-          start: startSeconds,
-          modestbranding: 1,
-          rel: 0
-        }
-      });
-    }
+    // Quando il video è pronto, salta al punto giusto
+    video.addEventListener("loadedmetadata", () => {
+      if (startSeconds < video.duration) {
+        video.currentTime = startSeconds;
+      }
+      video.play();
+    });
   </script>
 </body>
 </html>
+
