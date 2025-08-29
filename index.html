@@ -44,6 +44,8 @@
       padding: 5px 10px;
       cursor: pointer;
       font-size: 1.2em;
+      display: none; /* nascosto fino a quando il video parte */
+      z-index: 2; /* sempre sopra il video */
     }
     #fullscreenBtn:hover {
       background: rgba(255,255,255,0.6);
@@ -58,16 +60,14 @@
   </div>
 
   <script>
-    // 🔹 I tuoi 4 video da 6 ore
     const videoUrls = [
-      "https://ia601703.us.archive.org/1/items/vincere_hd_night_NEWPOSTERS/vincere_hd_night_NEWPOSTERS.mp4", // ore 0-6
-      "https://ia802909.us.archive.org/22/items/vincere_hd_day_NEWPOSTERS/vincere_hd_day_NEWPOSTERS.mp4",    // ore 6-12
-      "https://ia800908.us.archive.org/17/items/vincere_hd_sunset/vincere_hd_sunset.mp4",                    // ore 12-18
-      "https://ia801703.us.archive.org/1/items/vincere_hd_night_NEWPOSTERS/vincere_hd_night_NEWPOSTERS.mp4" // ore 18-24
+      "https://ia601703.us.archive.org/1/items/vincere_hd_night_NEWPOSTERS/vincere_hd_night_NEWPOSTERS.mp4",
+      "https://ia802909.us.archive.org/22/items/vincere_hd_day_NEWPOSTERS/vincere_hd_day_NEWPOSTERS.mp4",
+      "https://ia800908.us.archive.org/17/items/vincere_hd_sunset/vincere_hd_sunset.mp4",
+      "https://ia801703.us.archive.org/1/items/vincere_hd_night_NEWPOSTERS/vincere_hd_night_NEWPOSTERS.mp4"
     ];
 
-    const secondsPerVideo = 6 * 3600; // 6 ore in secondi
-
+    const secondsPerVideo = 6 * 3600;
     const now = new Date();
     const secondsToday = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
 
@@ -76,45 +76,38 @@
 
     const video = document.getElementById("myVideo");
     const loading = document.getElementById("loading");
+    const fsBtn = document.getElementById("fullscreenBtn");
 
     video.src = videoUrls[videoIndex];
 
-    // Retry: aspetta che il video sia pronto prima di saltare
     function trySeek() {
       if (video.readyState > 0) {
         if (startSeconds < video.duration) {
           video.currentTime = startSeconds;
         }
         video.play().then(() => {
-          if (loading) loading.style.display = "none";
+          loading.style.display = "none"; // nasconde messaggio
+          fsBtn.style.display = "block";  // mostra pulsante fullscreen
         }).catch(err => console.log("Autoplay bloccato:", err));
       } else {
-        setTimeout(trySeek, 500); // riprova ogni mezzo secondo
+        setTimeout(trySeek, 500);
       }
     }
 
     video.addEventListener("loadedmetadata", trySeek);
 
-    // 🔹 Fullscreen button
-    const fsBtn = document.getElementById("fullscreenBtn");
     fsBtn.addEventListener("click", () => {
       if (video.requestFullscreen) {
         video.requestFullscreen();
-      } else if (video.webkitRequestFullscreen) { // Safari
+      } else if (video.webkitRequestFullscreen) {
         video.webkitRequestFullscreen();
-      } else if (video.msRequestFullscreen) { // IE/Edge
+      } else if (video.msRequestFullscreen) {
         video.msRequestFullscreen();
       }
     });
 
-    // 🔹 Nascondere timeline/controlli in fullscreen
     document.addEventListener('fullscreenchange', () => {
-      if (document.fullscreenElement) {
-        // Nasconde il cursore e mantiene solo il pulsante custom
-        video.controls = false;
-      } else {
-        video.controls = false; // mantiene video pulito anche in normale
-      }
+      video.controls = false; // niente timeline in fullscreen
     });
   </script>
 </body>
