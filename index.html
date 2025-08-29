@@ -2,49 +2,27 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Video di Test</title>
+  <title>Debug Video</title>
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      background: black;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    video {
-      width: 80%;   
-      height: auto;
-      background: black;
-    }
+    body { background: black; color: white; }
   </style>
 </head>
 <body>
+  <p>Se vedi questo testo, la pagina è caricata.</p>
   <video id="myVideo" autoplay muted playsinline controls></video>
 
   <script>
-    // 🔹 Video di test (corto, circa 6 min)
-    const videoUrls = [
-      "https://archive.org/download/Popeye_forPresident/Popeye_forPresident_512kb.mp4"
-    ];
-
-    // Ora locale (in secondi dall’inizio della giornata)
-    const now = new Date();
-    const secondsToday = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-
-    // Per il test semplifichiamo: un solo video da 24h
-    const startSeconds = secondsToday % (24*3600);
-
+    const videoUrl = "https://archive.org/download/Popeye_forPresident/Popeye_forPresident_512kb.mp4";
     const video = document.getElementById("myVideo");
-    video.src = videoUrls[0];
+    video.src = videoUrl;
 
-    // Quando il video è pronto, salta al punto giusto
+    video.addEventListener("error", (e) => {
+      document.body.innerHTML += "<p style='color:red'>Errore nel caricamento video</p>";
+      console.log("Errore video:", e);
+    });
+
     video.addEventListener("loadedmetadata", () => {
-      if (startSeconds < video.duration) {
-        video.currentTime = startSeconds;
-      }
-      video.play();
+      document.body.innerHTML += "<p style='color:lime'>Video caricato correttamente!</p>";
     });
   </script>
 </body>
