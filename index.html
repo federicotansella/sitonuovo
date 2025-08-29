@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Video sincronizzato</title>
+  <title>Video di Test</title>
   <style>
     html, body {
       margin: 0;
@@ -14,35 +14,30 @@
       align-items: center;
     }
     video {
-      width: 80%;   /* 🔹 puoi regolare la dimensione */
-      height: auto; /* 🔹 mantiene le proporzioni */
+      width: 80%;   
+      height: auto;
       background: black;
     }
   </style>
 </head>
 <body>
-  <video id="myVideo" autoplay muted playsinline></video>
+  <video id="myVideo" autoplay muted playsinline controls></video>
 
   <script>
-    // 🔹 Inserisci qui gli URL .mp4 dei tuoi 4 video su Archive.org
+    // 🔹 Video di test (corto, circa 6 min)
     const videoUrls = [
-     https://ia601703.us.archive.org/1/items/vincere_hd_night_NEWPOSTERS/vincere_hd_night_NEWPOSTERS.mp4,  // ore 0-6
-      https://ia802909.us.archive.org/22/items/vincere_hd_day_NEWPOSTERS/vincere_hd_day_NEWPOSTERS.mp4,  // ore 6-12
-     https://ia800908.us.archive.org/17/items/vincere_hd_sunset/vincere_hd_sunset.mp4,  // ore 12-18
-     https://ia801703.us.archive.org/1/items/vincere_hd_night_NEWPOSTERS/vincere_hd_night_NEWPOSTERS.mp4   // ore 18-24
+      "https://archive.org/download/Popeye_forPresident/Popeye_forPresident_512kb.mp4"
     ];
 
-    // Ora locale in secondi
+    // Ora locale (in secondi dall’inizio della giornata)
     const now = new Date();
     const secondsToday = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
 
-    // Ogni video dura 6 ore = 21600 secondi
-    const segmentDuration = 21600;
-    const segmentIndex = Math.floor(secondsToday / segmentDuration);
-    const startSeconds = secondsToday % segmentDuration;
+    // Per il test semplifichiamo: un solo video da 24h
+    const startSeconds = secondsToday % (24*3600);
 
     const video = document.getElementById("myVideo");
-    video.src = videoUrls[segmentIndex];
+    video.src = videoUrls[0];
 
     // Quando il video è pronto, salta al punto giusto
     video.addEventListener("loadedmetadata", () => {
@@ -54,4 +49,3 @@
   </script>
 </body>
 </html>
-
