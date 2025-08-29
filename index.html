@@ -16,12 +16,12 @@
     }
 
     .video-container {
-      position: relative; /* necessario per posizionare pulsante e caricamento sopra il video */
+      position: relative;
       display: inline-block;
     }
 
     video {
-      width: 80%; /* dimensione del video */
+      width: 90%; /* dimensione del video */
       height: auto;
       background: black;
       display: block;
@@ -40,22 +40,10 @@
       text-align: center;
     }
 
-    #fullscreenBtn {
-      position: absolute;
-      bottom: 10px;  /* distanza dal bordo inferiore del video */
-      right: 10px;   /* distanza dal bordo destro del video */
-      background: rgba(255,255,255,0.3);
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      cursor: pointer;
-      font-size: 1.2em;
-      display: none; /* nascosto fino a quando il video parte */
-      z-index: 2;    /* sopra il video */
-    }
-
-    #fullscreenBtn:hover {
-      background: rgba(255,255,255,0.6);
+    #dots {
+      display: inline-block;
+      width: 1.5em; /* spazio fisso per i tre punti */
+      text-align: left;
     }
   </style>
 </head>
@@ -63,11 +51,9 @@
   <div class="video-container">
     <video id="myVideo" autoplay muted playsinline></video>
     <p id="loading">live stream is loading<span id="dots"></span></p>
-    <button id="fullscreenBtn">⛶</button>
   </div>
 
   <script>
-    // 🔹 Video 4x6 ore
     const videoUrls = [
       "https://ia601703.us.archive.org/1/items/vincere_hd_night_NEWPOSTERS/vincere_hd_night_NEWPOSTERS.mp4",
       "https://ia802909.us.archive.org/22/items/vincere_hd_day_NEWPOSTERS/vincere_hd_day_NEWPOSTERS.mp4",
@@ -84,27 +70,25 @@
 
     const video = document.getElementById("myVideo");
     const loading = document.getElementById("loading");
-    const fsBtn = document.getElementById("fullscreenBtn");
     const dots = document.getElementById("dots");
 
     video.src = videoUrls[videoIndex];
 
-    // 🔹 Animazione dei puntini
+    // 🔹 Animazione dei puntini alla fine della frase
     let dotCount = 0;
     setInterval(() => {
-      dotCount = (dotCount + 1) % 4;
+      dotCount = (dotCount + 1) % 4; // 0,1,2,3
       dots.textContent = '.'.repeat(dotCount);
     }, 500);
 
-    // 🔹 Avvio video e sync con orario
+    // 🔹 Avvio video sincronizzato con l'orario
     function trySeek() {
       if (video.readyState > 0) {
         if (startSeconds < video.duration) {
           video.currentTime = startSeconds;
         }
         video.play().then(() => {
-          loading.style.display = "none"; // nasconde messaggio
-          fsBtn.style.display = "block";  // mostra pulsante fullscreen
+          loading.style.display = "none"; // il caricamento sparisce
         }).catch(err => console.log("Autoplay bloccato:", err));
       } else {
         setTimeout(trySeek, 500);
@@ -113,18 +97,7 @@
 
     video.addEventListener("loadedmetadata", trySeek);
 
-    // 🔹 Pulsante fullscreen
-    fsBtn.addEventListener("click", () => {
-      if (video.requestFullscreen) {
-        video.requestFullscreen();
-      } else if (video.webkitRequestFullscreen) {
-        video.webkitRequestFullscreen();
-      } else if (video.msRequestFullscreen) {
-        video.msRequestFullscreen();
-      }
-    });
-
-    // 🔹 Nascondere timeline/controlli in fullscreen
+    // 🔹 Niente timeline o controlli in fullscreen
     document.addEventListener('fullscreenchange', () => {
       video.controls = false;
     });
