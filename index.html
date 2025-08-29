@@ -2,27 +2,55 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Debug Video</title>
+  <title>Video 24h</title>
   <style>
-    body { background: black; color: white; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    video {
+      width: 80%;
+      height: auto;
+      background: black;
+    }
   </style>
 </head>
 <body>
-  <p>Se vedi questo testo, la pagina è caricata.</p>
-  <video id="myVideo" autoplay muted playsinline controls></video>
+  <video id="myVideo" autoplay muted playsinline></video>
 
   <script>
-    const videoUrl = "https://archive.org/download/Popeye_forPresident/Popeye_forPresident_512kb.mp4";
+    // 🔹 Inserisci qui i tuoi 4 video (ognuno da 6h)
+    const videoUrls = [
+       https://ia601703.us.archive.org/1/items/vincere_hd_night_NEWPOSTERS/vincere_hd_night_NEWPOSTERS.mp4,
+       https://ia802909.us.archive.org/22/items/vincere_hd_day_NEWPOSTERS/vincere_hd_day_NEWPOSTERS.mp4,
+      https://ia800908.us.archive.org/17/items/vincere_hd_sunset/vincere_hd_sunset.mp4,
+      https://ia801703.us.archive.org/1/items/vincere_hd_night_NEWPOSTERS/vincere_hd_night_NEWPOSTERS.mp4
+    ];
+
+    const secondsPerVideo = 6 * 3600; // 6 ore in secondi
+
+    // Ora locale dell’utente
+    const now = new Date();
+    const secondsToday = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+
+    // Quale video serve
+    const videoIndex = Math.floor(secondsToday / secondsPerVideo);
+    const startSeconds = secondsToday % secondsPerVideo;
+
     const video = document.getElementById("myVideo");
-    video.src = videoUrl;
+    video.src = videoUrls[videoIndex];
 
-    video.addEventListener("error", (e) => {
-      document.body.innerHTML += "<p style='color:red'>Errore nel caricamento video</p>";
-      console.log("Errore video:", e);
-    });
-
+    // Quando i metadati sono pronti, facciamo il salto
     video.addEventListener("loadedmetadata", () => {
-      document.body.innerHTML += "<p style='color:lime'>Video caricato correttamente!</p>";
+      if (startSeconds < video.duration) {
+        video.currentTime = startSeconds;
+      }
+      video.play().catch(err => console.log("Autoplay bloccato:", err));
     });
   </script>
 </body>
