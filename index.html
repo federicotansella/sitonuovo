@@ -16,7 +16,7 @@
     }
 
     .video-container {
-      position: relative; /* necessario per posizionare il pulsante sopra il video */
+      position: relative; /* necessario per posizionare pulsante e caricamento sopra il video */
       display: inline-block;
     }
 
@@ -36,6 +36,8 @@
       font-size: 1.5em;
       font-family: sans-serif;
       pointer-events: none;
+      white-space: nowrap; /* mantiene tutto sulla stessa riga */
+      text-align: center;
     }
 
     #fullscreenBtn {
@@ -60,11 +62,12 @@
 <body>
   <div class="video-container">
     <video id="myVideo" autoplay muted playsinline></video>
-    <p id="loading">live stream is loading...</p>
+    <p id="loading">live stream is loading<span id="dots"></span></p>
     <button id="fullscreenBtn">⛶</button>
   </div>
 
   <script>
+    // 🔹 Video 4x6 ore
     const videoUrls = [
       "https://ia601703.us.archive.org/1/items/vincere_hd_night_NEWPOSTERS/vincere_hd_night_NEWPOSTERS.mp4",
       "https://ia802909.us.archive.org/22/items/vincere_hd_day_NEWPOSTERS/vincere_hd_day_NEWPOSTERS.mp4",
@@ -82,9 +85,18 @@
     const video = document.getElementById("myVideo");
     const loading = document.getElementById("loading");
     const fsBtn = document.getElementById("fullscreenBtn");
+    const dots = document.getElementById("dots");
 
     video.src = videoUrls[videoIndex];
 
+    // 🔹 Animazione dei puntini
+    let dotCount = 0;
+    setInterval(() => {
+      dotCount = (dotCount + 1) % 4;
+      dots.textContent = '.'.repeat(dotCount);
+    }, 500);
+
+    // 🔹 Avvio video e sync con orario
     function trySeek() {
       if (video.readyState > 0) {
         if (startSeconds < video.duration) {
@@ -101,6 +113,7 @@
 
     video.addEventListener("loadedmetadata", trySeek);
 
+    // 🔹 Pulsante fullscreen
     fsBtn.addEventListener("click", () => {
       if (video.requestFullscreen) {
         video.requestFullscreen();
@@ -111,8 +124,9 @@
       }
     });
 
+    // 🔹 Nascondere timeline/controlli in fullscreen
     document.addEventListener('fullscreenchange', () => {
-      video.controls = false; // nessuna timeline in fullscreen
+      video.controls = false;
     });
   </script>
 </body>
