@@ -17,14 +17,18 @@
 
     .video-container {
       position: relative;
-      display: inline-block;
+      display: flex;          /* flex per centrare contenuto */
+      justify-content: center; 
+      align-items: center;
+      width: 100%;            /* occupa tutta la larghezza */
     }
 
     video {
-      width: 90%; /* dimensione del video */
+      width: 90%;             /* dimensione video */
       height: auto;
       background: black;
-      display: block;
+      display: block;         /* evita spostamenti */
+      margin: 0 auto;         /* centra orizzontalmente */
     }
 
     #loading {
@@ -42,7 +46,7 @@
 
     #dots {
       display: inline-block;
-      width: 1.5em; /* spazio fisso per i tre punti */
+      width: 1.5em; /* spazio fisso per i puntini */
       text-align: left;
     }
   </style>
@@ -74,21 +78,21 @@
 
     video.src = videoUrls[videoIndex];
 
-    // 🔹 Animazione dei puntini alla fine della frase
+    // Animazione puntini
     let dotCount = 0;
     setInterval(() => {
-      dotCount = (dotCount + 1) % 4; // 0,1,2,3
+      dotCount = (dotCount + 1) % 4;
       dots.textContent = '.'.repeat(dotCount);
     }, 500);
 
-    // 🔹 Avvio video sincronizzato con l'orario
+    // Avvio video sincronizzato
     function trySeek() {
       if (video.readyState > 0) {
         if (startSeconds < video.duration) {
           video.currentTime = startSeconds;
         }
         video.play().then(() => {
-          loading.style.display = "none"; // il caricamento sparisce
+          loading.style.display = "none"; // nasconde caricamento
         }).catch(err => console.log("Autoplay bloccato:", err));
       } else {
         setTimeout(trySeek, 500);
@@ -97,7 +101,7 @@
 
     video.addEventListener("loadedmetadata", trySeek);
 
-    // 🔹 Niente timeline o controlli in fullscreen
+    // Niente timeline in fullscreen
     document.addEventListener('fullscreenchange', () => {
       video.controls = false;
     });
