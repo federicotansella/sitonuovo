@@ -12,48 +12,58 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      position: relative;
     }
     video {
-      width: 80%;
+      width: 80%;    /* puoi cambiare per ingrandire/rimpicciolire */
       height: auto;
       background: black;
+    }
+    #loading {
+      position: absolute;
+      color: white;
+      font-size: 1.5em;
+      font-family: sans-serif;
     }
   </style>
 </head>
 <body>
   <video id="myVideo" autoplay muted playsinline></video>
+  <p id="loading">live stream is loading...</p>
 
   <script>
-    // 🔹 4 file di test piccoli da Internet Archive (1-2 minuti ciascuno)
+    // 🔹 I tuoi 4 video da 6 ore
     const videoUrls = [
-      "https://archive.org/download/Popeye_forPresident/Popeye_forPresident_512kb.mp4",
-      "https://archive.org/download/BigBuckBunny_328/BigBuckBunny_512kb.mp4",
-      "https://archive.org/download/SintelTrailer/sintel_trailer-512kb.mp4",
-      "https://archive.org/download/TearsOfSteelTrailer_512kb/TearsOfSteelTrailer_512kb.mp4"
+      "https://ia601703.us.archive.org/1/items/vincere_hd_night_NEWPOSTERS/vincere_hd_night_NEWPOSTERS.mp4", // ore 0-6
+      "https://ia802909.us.archive.org/22/items/vincere_hd_day_NEWPOSTERS/vincere_hd_day_NEWPOSTERS.mp4",    // ore 6-12
+      "https://ia800908.us.archive.org/17/items/vincere_hd_sunset/vincere_hd_sunset.mp4",                    // ore 12-18
+      "https://ia801703.us.archive.org/1/items/vincere_hd_night_NEWPOSTERS/vincere_hd_night_NEWPOSTERS.mp4" // ore 18-24
     ];
 
-    const secondsPerVideo = 60; // per test, ogni video dura ~1 minuto
+    const secondsPerVideo = 6 * 3600; // 6 ore in secondi
 
-    // Ora locale dell’utente in secondi dall’inizio della giornata
     const now = new Date();
     const secondsToday = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
 
-    // Quale video selezionare
     const videoIndex = Math.floor(secondsToday / secondsPerVideo) % videoUrls.length;
     const startSeconds = secondsToday % secondsPerVideo;
 
     const video = document.getElementById("myVideo");
     video.src = videoUrls[videoIndex];
 
-    // Aspetta che il video sia pronto prima di saltare
+    const loading = document.getElementById("loading");
+
+    // Retry: aspetta che il video sia pronto prima di saltare
     function trySeek() {
       if (video.readyState > 0) {
         if (startSeconds < video.duration) {
           video.currentTime = startSeconds;
         }
-        video.play().catch(err => console.log("Autoplay bloccato:", err));
+        video.play().then(() => {
+          if (loading) loading.style.display = "none";
+        }).catch(err => console.log("Autoplay bloccato:", err));
       } else {
-        setTimeout(trySeek, 200); // riprova ogni 0,2 sec
+        setTimeout(trySeek, 500); // riprova ogni mezzo secondo
       }
     }
 
