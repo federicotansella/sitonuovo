@@ -14,16 +14,19 @@
       align-items: center;
       overflow: hidden;
     }
+
     .video-container {
-      position: relative;
+      position: relative; /* necessario per posizionare il pulsante sopra il video */
       display: inline-block;
     }
+
     video {
-      width: 80%; /* puoi modificare per ingrandire/rimpicciolire */
+      width: 80%; /* dimensione del video */
       height: auto;
       background: black;
       display: block;
     }
+
     #loading {
       position: absolute;
       top: 50%;
@@ -34,10 +37,11 @@
       font-family: sans-serif;
       pointer-events: none;
     }
+
     #fullscreenBtn {
       position: absolute;
-      bottom: 10px;
-      right: 10px;
+      bottom: 10px;  /* distanza dal bordo inferiore del video */
+      right: 10px;   /* distanza dal bordo destro del video */
       background: rgba(255,255,255,0.3);
       color: white;
       border: none;
@@ -45,8 +49,9 @@
       cursor: pointer;
       font-size: 1.2em;
       display: none; /* nascosto fino a quando il video parte */
-      z-index: 2; /* sempre sopra il video */
+      z-index: 2;    /* sopra il video */
     }
+
     #fullscreenBtn:hover {
       background: rgba(255,255,255,0.6);
     }
@@ -107,7 +112,7 @@
     });
 
     document.addEventListener('fullscreenchange', () => {
-      video.controls = false; // niente timeline in fullscreen
+      video.controls = false; // nessuna timeline in fullscreen
     });
   </script>
 </body>
